@@ -1,7 +1,17 @@
-import { ArrowRight, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Sparkles } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useTracking } from '@/hooks/use-tracking';
 
 export function FinalCTASection() {
+  const navigate = useNavigate();
+  const { trackCTA } = useTracking();
+
+  const handleStartClick = () => {
+    trackCTA('final_cta_start_button', '/start');
+    navigate('/start');
+  };
+
   return (
     <section className="py-20 md:py-28 bg-gradient-hero relative overflow-hidden">
       {/* Decorative */}
@@ -31,12 +41,15 @@ export function FinalCTASection() {
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-            <Button variant="hero" size="xl" asChild>
-              <a href="#pricing" className="group">
-                <Sparkles className="w-5 h-5" />
-                지금 시작하기
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Button 
+              variant="hero" 
+              size="xl" 
+              onClick={handleStartClick}
+              className="group"
+            >
+              <Sparkles className="w-5 h-5" />
+              지금 시작하기
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
 

@@ -1,40 +1,91 @@
-import { useState } from "react";
-import { Menu, X, Sparkles } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useState } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { Menu, X, Sparkles, Home } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useTracking } from '@/hooks/use-tracking';
 
 const navLinks = [
-  { label: "작동 원리", href: "#how-it-works" },
-  { label: "변화 스토리", href: "#before-after" },
-  { label: "리워드", href: "#rewards" },
-  { label: "가격", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
+  { label: '작동 원리', href: '#how-it-works' },
+  { label: '변화 스토리', href: '#before-after' },
+  { label: '리워드', href: '#rewards' },
+  { label: '가격', href: '#pricing' },
+  { label: 'FAQ', href: '#faq' },
 ];
 
 export function Header() {
   const [isOpen, setIsOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { trackCTA } = useTracking();
+
+  const isStartPage = location.pathname === '/start';
+
+  const handleStartClick = () => {
+    trackCTA('header_start_button', '/start');
+    navigate('/start');
+    setIsOpen(false);
+  };
+
+  const handleHomeClick = () => {
+    trackCTA('header_home_button', '/');
+    navigate('/');
+    setIsOpen(false);
+  };
 
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container flex items-center justify-between h-16">
-        <a href="#" className="flex items-center gap-2 text-xl font-bold text-foreground">
+        <a 
+          href="#" 
+          onClick={(e) => {
+            e.preventDefault();
+            handleHomeClick();
+          }}
+          className="flex items-center gap-2 text-xl font-bold text-foreground"
+        >
           <Sparkles className="w-6 h-6 text-primary" />
           <span>실행플래너</span>
         </a>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex items-center gap-6">
-          {navLinks.map((link) => (
-            <a
-              key={link.href}
-              href={link.href}
-              className="text-muted-foreground hover:text-primary transition-colors font-medium"
-            >
-              {link.label}
-            </a>
-          ))}
-          <Button variant="hero" size="sm" asChild>
-            <a href="#pricing">시작하기</a>
-          </Button>
+          {isStartPage ? (
+            // Start 페이지용 네비게이션
+            <>
+              <a href="#pricing-cards" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+                가격
+              </a>
+              <a href="#differences" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+                특징
+              </a>
+              <a href="#order-form" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+                주문
+              </a>
+              <a href="#start-faq" className="text-muted-foreground hover:text-primary transition-colors font-medium">
+                FAQ
+              </a>
+              <Button variant="ghost" size="sm" onClick={handleHomeClick}>
+                <Home className="w-4 h-4 mr-1" />
+                홈으로
+              </Button>
+            </>
+          ) : (
+            // 랜딩 페이지용 네비게이션
+            <>
+              {navLinks.map((link) => (
+                <a
+                  key={link.href}
+                  href={link.href}
+                  className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                >
+                  {link.label}
+                </a>
+              ))}
+              <Button variant="hero" size="sm" onClick={handleStartClick}>
+                시작하기
+              </Button>
+            </>
+          )}
         </nav>
 
         {/* Mobile Menu Button */}
@@ -51,19 +102,42 @@ export function Header() {
       {isOpen && (
         <nav className="md:hidden bg-card border-b border-border py-4">
           <div className="container flex flex-col gap-4">
-            {navLinks.map((link) => (
-              <a
-                key={link.href}
-                href={link.href}
-                className="text-foreground hover:text-primary transition-colors font-medium py-2"
-                onClick={() => setIsOpen(false)}
-              >
-                {link.label}
-              </a>
-            ))}
-            <Button variant="hero" asChild>
-              <a href="#pricing" onClick={() => setIsOpen(false)}>시작하기</a>
-            </Button>
+            {isStartPage ? (
+              <>
+                <a href="#pricing-cards" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
+                  가격
+                </a>
+                <a href="#differences" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
+                  특징
+                </a>
+                <a href="#order-form" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
+                  주문
+                </a>
+                <a href="#start-faq" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
+                  FAQ
+                </a>
+                <Button variant="outline" onClick={handleHomeClick}>
+                  <Home className="w-4 h-4 mr-1" />
+                  홈으로
+                </Button>
+              </>
+            ) : (
+              <>
+                {navLinks.map((link) => (
+                  <a
+                    key={link.href}
+                    href={link.href}
+                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
+                    onClick={() => setIsOpen(false)}
+                  >
+                    {link.label}
+                  </a>
+                ))}
+                <Button variant="hero" onClick={handleStartClick}>
+                  시작하기
+                </Button>
+              </>
+            )}
           </div>
         </nav>
       )}

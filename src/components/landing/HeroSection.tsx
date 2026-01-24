@@ -1,7 +1,17 @@
-import { ArrowRight, Play } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Play } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useTracking } from '@/hooks/use-tracking';
 
 export function HeroSection() {
+  const navigate = useNavigate();
+  const { trackCTA } = useTracking();
+
+  const handleStartClick = () => {
+    trackCTA('hero_start_button', '/start');
+    navigate('/start');
+  };
+
   return (
     <section className="relative min-h-screen flex items-center pt-16 bg-gradient-hero overflow-hidden">
       {/* Decorative elements */}
@@ -31,11 +41,14 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-            <Button variant="hero" size="xl" asChild>
-              <a href="#pricing" className="group">
-                지금 시작하기
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </a>
+            <Button 
+              variant="hero" 
+              size="xl" 
+              onClick={handleStartClick}
+              className="group"
+            >
+              지금 시작하기
+              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
             <Button variant="heroSecondary" size="lg" asChild>
               <a href="#how-it-works">
