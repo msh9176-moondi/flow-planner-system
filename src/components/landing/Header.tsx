@@ -5,11 +5,11 @@ import { Button } from '@/components/ui/button';
 import { useTracking } from '@/hooks/use-tracking';
 
 const navLinks = [
-  { label: '작동 원리', href: '#how-it-works' },
-  { label: '변화 스토리', href: '#before-after' },
-  { label: '리워드', href: '#rewards' },
-  { label: '가격', href: '#pricing' },
-  { label: 'FAQ', href: '#faq' },
+  { label: '작동 원리', href: 'how-it-works' },
+  { label: '변화 스토리', href: 'before-after' },
+  { label: '리워드', href: 'rewards' },
+  { label: '가격', href: 'pricing' },
+  { label: 'FAQ', href: 'faq' },
 ];
 
 export function Header() {
@@ -19,6 +19,27 @@ export function Header() {
   const { trackCTA } = useTracking();
 
   const isStartPage = location.pathname === '/start';
+  const isHowItWorksPage = location.pathname === '/how-it-works';
+
+  const handleScrollToSection = (sectionId: string) => {
+    // 랜딩 페이지가 아니면 먼저 이동
+    if (location.pathname !== '/') {
+      navigate('/');
+      // 페이지 이동 후 스크롤
+      setTimeout(() => {
+        const element = document.getElementById(sectionId);
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 100);
+    } else {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth' });
+      }
+    }
+    setIsOpen(false);
+  };
 
   const handleStartClick = () => {
     trackCTA('header_start_button', '/start');
@@ -73,13 +94,13 @@ export function Header() {
             // 랜딩 페이지용 네비게이션
             <>
               {navLinks.map((link) => (
-                <a
+                <button
                   key={link.href}
-                  href={link.href}
-                  className="text-muted-foreground hover:text-primary transition-colors font-medium"
+                  onClick={() => handleScrollToSection(link.href)}
+                  className="text-muted-foreground hover:text-primary transition-colors font-medium bg-transparent border-none cursor-pointer"
                 >
                   {link.label}
-                </a>
+                </button>
               ))}
               <Button variant="hero" size="sm" onClick={handleStartClick}>
                 시작하기
@@ -124,14 +145,13 @@ export function Header() {
             ) : (
               <>
                 {navLinks.map((link) => (
-                  <a
+                  <button
                     key={link.href}
-                    href={link.href}
-                    className="text-foreground hover:text-primary transition-colors font-medium py-2"
-                    onClick={() => setIsOpen(false)}
+                    onClick={() => handleScrollToSection(link.href)}
+                    className="text-foreground hover:text-primary transition-colors font-medium py-2 bg-transparent border-none cursor-pointer text-left"
                   >
                     {link.label}
-                  </a>
+                  </button>
                 ))}
                 <Button variant="hero" onClick={handleStartClick}>
                   시작하기
