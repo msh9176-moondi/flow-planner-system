@@ -10,15 +10,17 @@ import {
   Puzzle,
   Brain,
   Smartphone,
-  ChevronDown,
   Mail,
   Phone,
   Sparkles,
-  Eye
+  Eye,
+  Plus,
+  Minus
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Accordion,
   AccordionContent,
@@ -27,6 +29,7 @@ import {
 } from '@/components/ui/accordion';
 import { Header } from '@/components/landing/Header';
 import { Footer } from '@/components/landing/Footer';
+import { PaymentModal } from '@/components/PaymentModal';
 import { useTracking } from '@/hooks/use-tracking';
 
 // CTA 문구 3안
@@ -36,14 +39,15 @@ const ctaOptions = {
   challenge: '29일 도전 시작',
 };
 
-const selectedCTA = ctaOptions.emotional; // 현재 선택된 스타일
+const selectedCTA = ctaOptions.emotional;
 
 // 가격 카드 데이터
 const pricingCards = [
   {
     id: 'starter',
     name: '시작 패키지',
-    price: '29,000',
+    price: 29000,
+    displayPrice: '29,000',
     icon: Package,
     tier: 'main',
     badge: '추천',
@@ -60,7 +64,8 @@ const pricingCards = [
   {
     id: 'refill',
     name: '리필 / 추가팩',
-    price: '12,000',
+    price: 12000,
+    displayPrice: '12,000',
     pricePrefix: '',
     icon: RefreshCcw,
     tier: 'sub',
@@ -73,11 +78,13 @@ const pricingCards = [
       '테마별 워크시트',
     ],
     outcome: '루틴을 확장하고 시스템을 유지합니다',
+    hasQuantity: true,
   },
   {
     id: 'subscription',
     name: '분석 구독',
-    price: '2,900',
+    price: 2900,
+    displayPrice: '2,900',
     priceUnit: '/월',
     icon: BarChart3,
     tier: 'optional',
@@ -90,6 +97,7 @@ const pricingCards = [
       '프리미엄 커뮤니티 접근',
     ],
     outcome: '데이터로 나를 이해하고 성장합니다',
+    isSubscription: true,
   },
 ];
 
@@ -157,31 +165,115 @@ const faqItems = [
   },
 ];
 
+interface SelectedItem {
+  id: string;
+  checked: boolean;
+  quantity: number;
+}
+
 export default function Start() {
   const navigate = useNavigate();
   const { trackCTA, trackPageView, trackFormSubmit, trackOptionSelect, trackFAQOpen } = useTracking();
   
-  const [selectedOption, setSelectedOption] = useState('starter');
+  // 체크박스 기반 선택 상태
+  const [selectedItems, setSelectedItems] = useState<Record<string, SelectedItem>>({
+    starter: { id: 'starter', checked: true, quantity: 1 },
+    refill: { id: 'refill', checked: false, quantity: 1 },
+    subscription: { id: 'subscription', checked: false, quantity: 1 },
+  });
+
   const [formData, setFormData] = useState({
     email: '',
     phone: '',
   });
+
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
 
   useEffect(() => {
     trackPageView('start');
     window.scrollTo(0, 0);
   }, []);
 
-  const handleOptionChange = (value: string) => {
-    setSelectedOption(value);
-    trackOptionSelect('package', value);
+  // 체크박스 토글
+  const handleItemToggle = (id: string, checked: boolean) => {
+    setSelectedItems((prev) => ({
+      ...prev,
+      [id]: { ...prev[id], checked },
+    }));
+    trackOptionSelect('package_toggle', `${id}_${checked ? 'checked' : 'unchecked'}`);
   };
 
+  // 수량 변경
+  const handleQuantityChange = (id: string, delta: number) => {
+    setSelectedItems((prev) => {
+      const newQuantity = Math.max(1, prev[id].quantity + delta);
+      return {
+        ...prev,
+        [id]: { ...prev[id], quantity: newQuantity },
+      };
+    });
+    trackOptionSelect('quantity_change', `${id}_${delta > 0 ? 'increase' : 'decrease'}`);
+  };
+
+  // 총액 계산
+  const calculateTotals = () => {
+    let oneTimeTotal = 0;
+    let subscriptionTotal = 0;
+
+    Object.values(selectedItems).forEach((item) => {
+      if (!item.checked) return;
+      
+      const cardData = pricingCards.find((c) => c.id === item.id);
+      if (!cardData) return;
+
+      if (cardData.isSubscription) {
+        subscriptionTotal += cardData.price * item.quantity;
+      } else {
+        oneTimeTotal += cardData.price * item.quantity;
+      }
+    });
+
+    return { oneTimeTotal, subscriptionTotal, total: oneTimeTotal };
+  };
+
+  const { oneTimeTotal, subscriptionTotal, total } = calculateTotals();
+
+  // 선택된 항목 리스트 생성
+  const getSelectedOrderItems = () => {
+    return Object.values(selectedItems)
+      .filter((item) => item.checked)
+      .map((item) => {
+        const cardData = pricingCards.find((c) => c.id === item.id)!;
+        return {
+          id: item.id,
+          name: cardData.name,
+          price: cardData.price,
+          quantity: item.quantity,
+          isSubscription: cardData.isSubscription,
+        };
+      });
+  };
+
+  // 폼 제출 → 결제 모달 열기
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    trackFormSubmit('order_form', { package: selectedOption, hasEmail: !!formData.email });
-    // Placeholder: 실제 결제 연동 시 여기에 로직 추가
-    window.location.href = '#pay';
+    
+    if (!formData.email) {
+      return;
+    }
+
+    if (getSelectedOrderItems().length === 0) {
+      return;
+    }
+
+    trackFormSubmit('order_form', { 
+      items: getSelectedOrderItems().map(i => i.id).join(','),
+      hasEmail: !!formData.email,
+      total: oneTimeTotal,
+    });
+    
+    trackCTA('payment_modal_open', 'order_form');
+    setIsPaymentModalOpen(true);
   };
 
   const scrollToOrder = () => {
@@ -222,6 +314,8 @@ export default function Start() {
     }
   };
 
+  const hasSelectedItems = getSelectedOrderItems().length > 0;
+
   return (
     <>
       <Header />
@@ -259,12 +353,14 @@ export default function Start() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
               {pricingCards.map((card) => {
                 const styles = getTierStyles(card.tier);
+                const isChecked = selectedItems[card.id]?.checked || false;
+                
                 return (
                   <div
                     key={card.id}
                     className={`relative rounded-2xl p-6 border-2 transition-all ${styles.container} ${
                       card.tier === 'main' ? 'md:scale-105 z-10' : ''
-                    }`}
+                    } ${isChecked ? 'ring-2 ring-primary/30' : ''}`}
                   >
                     {card.badge && (
                       <div className="absolute -top-3 left-1/2 -translate-x-1/2 px-4 py-1 bg-primary text-primary-foreground text-xs font-bold rounded-full">
@@ -288,7 +384,7 @@ export default function Start() {
                       <span className={`text-3xl font-extrabold ${
                         card.tier === 'optional' ? 'text-muted-foreground' : 'text-foreground'
                       }`}>
-                        ₩{card.price}
+                        ₩{card.displayPrice}
                       </span>
                       {card.priceUnit && (
                         <span className="text-muted-foreground text-sm">{card.priceUnit}</span>
@@ -316,12 +412,11 @@ export default function Start() {
                       variant={styles.button}
                       className="w-full"
                       onClick={() => {
-                        handleOptionChange(card.id);
+                        handleItemToggle(card.id, !isChecked);
                         document.getElementById('order-form')?.scrollIntoView({ behavior: 'smooth' });
                       }}
                     >
-                      선택하기
-                      <ChevronDown className="w-4 h-4 ml-1" />
+                      {isChecked ? '선택됨 ✓' : '선택하기'}
                     </Button>
                   </div>
                 );
@@ -382,38 +477,149 @@ export default function Start() {
               </h2>
 
               <form onSubmit={handleFormSubmit} className="space-y-6">
-                {/* Option Selection */}
+                {/* Checkbox Package Selection */}
                 <div className="space-y-3">
-                  <Label className="text-base font-semibold">패키지 선택</Label>
+                  <Label className="text-base font-semibold">패키지 선택 (중복 선택 가능)</Label>
                   <div className="space-y-2">
-                    {[
-                      { id: 'starter', label: '시작 패키지', price: '₩29,000' },
-                      { id: 'refill', label: '리필 / 추가팩', price: '₩12,000~' },
-                      { id: 'subscription', label: '분석 구독', price: '₩2,900/월' },
-                    ].map((opt) => (
-                      <label
-                        key={opt.id}
-                        className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
-                          selectedOption === opt.id
-                            ? 'border-primary bg-primary/5'
-                            : 'border-border hover:border-primary/30'
-                        }`}
-                      >
+                    {/* 시작 패키지 */}
+                    <label
+                      className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        selectedItems.starter.checked
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/30'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={selectedItems.starter.checked}
+                          onCheckedChange={(checked) => handleItemToggle('starter', !!checked)}
+                        />
+                        <span className="font-medium text-foreground">시작 패키지</span>
+                      </div>
+                      <span className="text-sm font-bold text-primary">₩29,000</span>
+                    </label>
+
+                    {/* 리필/추가팩 with Quantity */}
+                    <div
+                      className={`p-4 rounded-xl border-2 transition-all ${
+                        selectedItems.refill.checked
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border hover:border-primary/30'
+                      }`}
+                    >
+                      <label className="flex items-center justify-between cursor-pointer">
                         <div className="flex items-center gap-3">
-                          <input
-                            type="radio"
-                            name="package"
-                            value={opt.id}
-                            checked={selectedOption === opt.id}
-                            onChange={() => handleOptionChange(opt.id)}
-                            className="w-4 h-4 text-primary"
+                          <Checkbox
+                            checked={selectedItems.refill.checked}
+                            onCheckedChange={(checked) => handleItemToggle('refill', !!checked)}
                           />
-                          <span className="font-medium text-foreground">{opt.label}</span>
+                          <span className="font-medium text-foreground">리필 / 추가팩</span>
                         </div>
-                        <span className="text-sm font-bold text-primary">{opt.price}</span>
+                        <span className="text-sm font-bold text-primary">
+                          ₩{(12000 * selectedItems.refill.quantity).toLocaleString()}
+                        </span>
                       </label>
-                    ))}
+                      
+                      {/* Quantity Stepper */}
+                      <div className={`mt-3 flex items-center justify-between pl-7 ${
+                        !selectedItems.refill.checked ? 'opacity-50 pointer-events-none' : ''
+                      }`}>
+                        <span className="text-sm text-muted-foreground">수량</span>
+                        <div className="flex items-center gap-2">
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleQuantityChange('refill', -1)}
+                            disabled={!selectedItems.refill.checked || selectedItems.refill.quantity <= 1}
+                          >
+                            <Minus className="w-4 h-4" />
+                          </Button>
+                          <span className="w-8 text-center font-medium">
+                            {selectedItems.refill.quantity}
+                          </span>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            size="sm"
+                            className="h-8 w-8 p-0"
+                            onClick={() => handleQuantityChange('refill', 1)}
+                            disabled={!selectedItems.refill.checked}
+                          >
+                            <Plus className="w-4 h-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* 분석 구독 */}
+                    <label
+                      className={`flex items-center justify-between p-4 rounded-xl border-2 cursor-pointer transition-all ${
+                        selectedItems.subscription.checked
+                          ? 'border-primary bg-primary/5'
+                          : 'border-border/50 hover:border-primary/30 bg-muted/30'
+                      }`}
+                    >
+                      <div className="flex items-center gap-3">
+                        <Checkbox
+                          checked={selectedItems.subscription.checked}
+                          onCheckedChange={(checked) => handleItemToggle('subscription', !!checked)}
+                        />
+                        <div>
+                          <span className="font-medium text-foreground">분석 구독</span>
+                          <p className="text-xs text-muted-foreground">매월 자동 결제</p>
+                        </div>
+                      </div>
+                      <span className="text-sm font-bold text-muted-foreground">₩2,900/월</span>
+                    </label>
                   </div>
+                </div>
+
+                {/* 선택 요약 박스 */}
+                <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3">
+                  <h4 className="font-semibold text-foreground">선택 요약</h4>
+                  
+                  {!hasSelectedItems ? (
+                    <p className="text-sm text-muted-foreground">선택된 항목이 없습니다.</p>
+                  ) : (
+                    <>
+                      <ul className="space-y-1 text-sm">
+                        {selectedItems.starter.checked && (
+                          <li className="flex justify-between">
+                            <span>시작 패키지</span>
+                            <span className="font-medium">₩29,000</span>
+                          </li>
+                        )}
+                        {selectedItems.refill.checked && (
+                          <li className="flex justify-between">
+                            <span>리필 / 추가팩 x{selectedItems.refill.quantity}</span>
+                            <span className="font-medium">
+                              ₩{(12000 * selectedItems.refill.quantity).toLocaleString()}
+                            </span>
+                          </li>
+                        )}
+                        {selectedItems.subscription.checked && (
+                          <li className="flex justify-between text-muted-foreground">
+                            <span>분석 구독 (월 결제)</span>
+                            <span className="font-medium">₩2,900/월</span>
+                          </li>
+                        )}
+                      </ul>
+                      
+                      <div className="border-t border-border pt-3">
+                        <div className="flex justify-between text-lg font-bold">
+                          <span>총 결제 금액</span>
+                          <span className="text-primary">₩{oneTimeTotal.toLocaleString()}</span>
+                        </div>
+                        {subscriptionTotal > 0 && (
+                          <p className="text-xs text-muted-foreground mt-1">
+                            + 월 ₩{subscriptionTotal.toLocaleString()} (구독 별도 결제)
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </div>
 
                 {/* Contact Info */}
@@ -462,6 +668,7 @@ export default function Start() {
                   variant="hero"
                   size="xl"
                   className="w-full group"
+                  disabled={!hasSelectedItems || !formData.email}
                 >
                   <Sparkles className="w-5 h-5" />
                   {selectedCTA}
@@ -544,6 +751,17 @@ export default function Start() {
         </section>
       </main>
       <Footer />
+
+      {/* Payment Modal */}
+      <PaymentModal
+        open={isPaymentModalOpen}
+        onOpenChange={setIsPaymentModalOpen}
+        selectedItems={getSelectedOrderItems()}
+        totalAmount={oneTimeTotal}
+        subscriptionAmount={subscriptionTotal}
+        email={formData.email}
+        phone={formData.phone}
+      />
     </>
   );
 }
