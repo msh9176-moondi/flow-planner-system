@@ -50,11 +50,16 @@ export function HeroSection() {
               지금 시작하기
               <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
             </Button>
-            <Button variant="heroSecondary" size="lg" asChild>
-              <a href="#how-it-works">
-                <Play className="w-4 h-4" />
-                어떻게 작동하나요?
-              </a>
+            <Button 
+              variant="heroSecondary" 
+              size="lg" 
+              onClick={() => {
+                trackCTA('hero_how_it_works_button', '/how-it-works');
+                navigate('/how-it-works');
+              }}
+            >
+              <Play className="w-4 h-4" />
+              어떻게 작동하나요?
             </Button>
           </div>
 
