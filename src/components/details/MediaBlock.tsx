@@ -8,7 +8,12 @@ interface MediaBlockProps {
   caption?: string;
 }
 
-export function MediaBlock({ type, src, alt = '미디어 콘텐츠', caption }: MediaBlockProps) {
+export function MediaBlock({
+  type,
+  src,
+  alt = '미디어 콘텐츠',
+  caption,
+}: MediaBlockProps) {
   const [hasError, setHasError] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -22,7 +27,13 @@ export function MediaBlock({ type, src, alt = '미디어 콘텐츠', caption }: 
   };
 
   // Placeholder UI when media is missing or errored
-  const PlaceholderUI = ({ icon: Icon, label }: { icon: typeof ImageIcon; label: string }) => (
+  const PlaceholderUI = ({
+    icon: Icon,
+    label,
+  }: {
+    icon: typeof ImageIcon;
+    label: string;
+  }) => (
     <div className="w-full bg-muted/50 border-2 border-dashed border-border rounded-xl flex flex-col items-center justify-center py-16 px-8">
       <Icon className="w-12 h-12 text-muted-foreground mb-4" />
       <p className="text-muted-foreground text-sm text-center">
@@ -60,7 +71,7 @@ export function MediaBlock({ type, src, alt = '미디어 콘텐츠', caption }: 
               loading="lazy"
               onError={handleError}
               onLoad={handleLoad}
-              className="w-full h-auto rounded-xl shadow-soft object-contain max-h-[600px]"
+              className="w-full h-auto rounded-xl shadow-soft object-contain max-h-[2450px]"
             />
           </div>
         );

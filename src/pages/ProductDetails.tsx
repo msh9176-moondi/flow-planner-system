@@ -30,7 +30,7 @@ const sections = [
     description:
       '큰 과제는 시작 자체를 막습니다. "보고서 쓰기"가 아니라 "보고서 파일 열기"처럼 10분 안에 끝낼 수 있는 단위로 쪼개면, 착수 저항이 사라지고 일단 시작하면 흐름이 생깁니다.',
     mediaType: 'svg' as const,
-    mediaSrc: '/assets/details/task-breakdown.svg',
+    mediaSrc: '/assets/details/task-breakdown.png',
     caption: '과제 분해 카드 + 10분 타이머 + 단계별 체크',
     bullets: [
       '큰 과제를 작은 첫 단계로 분해',
@@ -57,8 +57,8 @@ const sections = [
     title: 'CBT 미루기 대응',
     description:
       '미루기는 의지 부족이 아니라 감정 회피입니다. 불안, 완벽주의, 지루함을 기록하고 재구성하면 자책 없이 다시 시작할 수 있습니다. 인지행동 기반 워크시트가 감정 리셋을 도와줍니다.',
-    mediaType: 'pdf' as const,
-    mediaSrc: '/assets/details/cbt-worksheet.pdf',
+    mediaType: 'image' as const,
+    mediaSrc: '/assets/details/cbt-worksheet.png', // ✅ pdf -> png (또는 jpg)
     caption: '미루기 대응 페이지 + 감정 기록 + 회복 일기',
     bullets: [
       '미루기 원인 감정 파악 워크시트',
@@ -85,8 +85,8 @@ const sections = [
     title: '사용 시나리오',
     description:
       '직장, 집안일, 자기관리 등 다양한 상황에서 FLOCA 시스템이 어떻게 작동하는지 실제 예시로 확인하세요. 미루기 루프에서 실행 루프로 전환되는 Before/After를 비교해 보세요.',
-    mediaType: 'svg' as const,
-    mediaSrc: '/assets/details/use-cases.svg',
+    mediaType: 'image' as const,
+    mediaSrc: '/assets/details/use-cases.png',
     caption: '직장/집안일/자기관리 시나리오 비교',
     bullets: [
       '직장: 업무 시작 전 10분 세팅',
@@ -147,7 +147,11 @@ export default function ProductDetails() {
                   구매 / 시작하기
                   <ArrowRight className="w-5 h-5" />
                 </Button>
-                <Button variant="outline" size="lg" onClick={handleHowItWorksClick}>
+                <Button
+                  variant="outline"
+                  size="lg"
+                  onClick={handleHowItWorksClick}
+                >
                   <Home className="w-5 h-5" />
                   작동 원리로 돌아가기
                 </Button>
@@ -246,7 +250,8 @@ export default function ProductDetails() {
                     navigate('/start');
                     setTimeout(() => {
                       const element = document.getElementById('start-faq');
-                      if (element) element.scrollIntoView({ behavior: 'smooth' });
+                      if (element)
+                        element.scrollIntoView({ behavior: 'smooth' });
                     }, 100);
                   }}
                 >
