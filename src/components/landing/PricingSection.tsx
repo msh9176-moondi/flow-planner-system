@@ -1,12 +1,18 @@
-import { Check, Package, RefreshCcw, BarChart3, ArrowRight } from 'lucide-react';
+import {
+  Check,
+  Package,
+  RefreshCcw,
+  BarChart3,
+  ArrowRight,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
 // CTA 문구 3안 - 원하는 스타일 선택 후 다른 두 개 삭제
 const ctaOptions = {
   starter: {
-    practical: '지금 시작하기',      // 실용형
-    emotional: '오늘, 첫 걸음',       // 감정형
-    challenge: '29일 도전 시작',      // 도전형
+    practical: '지금 시작하기', // 실용형
+    emotional: '오늘, 첫 걸음', // 감정형
+    challenge: '29일 도전 시작', // 도전형
   },
   refill: {
     practical: '추가 구매',
@@ -27,14 +33,14 @@ const packages = [
   {
     id: 'starter',
     name: '시작 패키지',
-    price: '29,000',
+    price: '39,000',
     priceUnit: '',
     icon: Package,
     tier: 'main', // main | sub | optional
     badge: '가장 많이 선택',
     targetUser: '플래너를 사도 3일 만에 포기했던 분',
     features: [
-      '플래너 본체 1권 (3개월분)',
+      '플래너 본체 1권',
       '마그네틱 할 일 카드 기본 세트',
       'NFC 태그 스티커 3장',
       'CBT 미루기 대응 워크시트',
@@ -91,7 +97,8 @@ export function PricingSection() {
         };
       case 'sub':
         return {
-          container: 'border-border shadow-card hover:border-primary/30 bg-card',
+          container:
+            'border-border shadow-card hover:border-primary/30 bg-card',
           icon: 'text-accent',
           button: 'outline' as const,
           priceColor: 'text-foreground',
@@ -130,7 +137,8 @@ export function PricingSection() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto items-start">
           {packages.map((pkg) => {
             const styles = getTierStyles(pkg.tier);
-            const ctaText = ctaOptions[pkg.id as keyof typeof ctaOptions][selectedStyle];
+            const ctaText =
+              ctaOptions[pkg.id as keyof typeof ctaOptions][selectedStyle];
 
             return (
               <div
@@ -146,13 +154,19 @@ export function PricingSection() {
 
                 {/* Header */}
                 <div className="text-center mb-5">
-                  <pkg.icon className={`w-10 h-10 mx-auto mb-3 ${styles.icon}`} />
-                  <h3 className="text-xl font-bold text-foreground">{pkg.name}</h3>
+                  <pkg.icon
+                    className={`w-10 h-10 mx-auto mb-3 ${styles.icon}`}
+                  />
+                  <h3 className="text-xl font-bold text-foreground">
+                    {pkg.name}
+                  </h3>
                 </div>
 
                 {/* Target User */}
                 <div className="mb-5">
-                  <p className="text-xs font-medium text-primary mb-1">이런 분께</p>
+                  <p className="text-xs font-medium text-primary mb-1">
+                    이런 분께
+                  </p>
                   <p className="text-sm text-foreground font-medium">
                     {pkg.targetUser}
                   </p>
@@ -160,11 +174,15 @@ export function PricingSection() {
 
                 {/* Price */}
                 <div className="text-center mb-5 py-3 bg-muted/50 rounded-xl">
-                  <span className={`text-3xl font-extrabold ${styles.priceColor}`}>
+                  <span
+                    className={`text-3xl font-extrabold ${styles.priceColor}`}
+                  >
                     ₩{pkg.price}
                   </span>
                   {pkg.priceUnit && (
-                    <span className="text-muted-foreground text-sm">{pkg.priceUnit}</span>
+                    <span className="text-muted-foreground text-sm">
+                      {pkg.priceUnit}
+                    </span>
                   )}
                 </div>
 
@@ -172,10 +190,20 @@ export function PricingSection() {
                 <ul className="space-y-2.5 mb-5">
                   {pkg.features.map((f, j) => (
                     <li key={j} className="flex items-start gap-2 text-sm">
-                      <Check className={`w-4 h-4 shrink-0 mt-0.5 ${
-                        pkg.tier === 'optional' ? 'text-muted-foreground' : 'text-growth'
-                      }`} />
-                      <span className={pkg.tier === 'optional' ? 'text-muted-foreground' : 'text-foreground'}>
+                      <Check
+                        className={`w-4 h-4 shrink-0 mt-0.5 ${
+                          pkg.tier === 'optional'
+                            ? 'text-muted-foreground'
+                            : 'text-growth'
+                        }`}
+                      />
+                      <span
+                        className={
+                          pkg.tier === 'optional'
+                            ? 'text-muted-foreground'
+                            : 'text-foreground'
+                        }
+                      >
                         {f}
                       </span>
                     </li>
@@ -212,10 +240,25 @@ export function PricingSection() {
               💡 CTA 문구 3안 보기 (개발용)
             </summary>
             <div className="mt-3 p-4 bg-muted rounded-lg space-y-2">
-              <p><strong>시작 패키지:</strong> 실용형 "지금 시작하기" / 감정형 "오늘, 첫 걸음" / 도전형 "29일 도전 시작"</p>
-              <p><strong>리필팩:</strong> 실용형 "추가 구매" / 감정형 "계속 이어가기" / 도전형 "확장하기"</p>
-              <p><strong>분석 구독:</strong> 실용형 "구독 신청" / 감정형 "성장 기록하기" / 도전형 "다음 레벨로"</p>
-              <p className="pt-2 border-t border-border">현재 선택: <code className="bg-background px-1 rounded">{selectedStyle}</code> (코드에서 변경 가능)</p>
+              <p>
+                <strong>시작 패키지:</strong> 실용형 "지금 시작하기" / 감정형
+                "오늘, 첫 걸음" / 도전형 "29일 도전 시작"
+              </p>
+              <p>
+                <strong>리필팩:</strong> 실용형 "추가 구매" / 감정형 "계속
+                이어가기" / 도전형 "확장하기"
+              </p>
+              <p>
+                <strong>분석 구독:</strong> 실용형 "구독 신청" / 감정형 "성장
+                기록하기" / 도전형 "다음 레벨로"
+              </p>
+              <p className="pt-2 border-t border-border">
+                현재 선택:{' '}
+                <code className="bg-background px-1 rounded">
+                  {selectedStyle}
+                </code>{' '}
+                (코드에서 변경 가능)
+              </p>
             </div>
           </details>
         </div>

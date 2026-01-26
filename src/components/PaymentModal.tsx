@@ -51,7 +51,7 @@ export function PaymentModal({
   // 계좌 정보 (placeholder)
   const bankInfo = {
     bank: '카카오뱅크',
-    account: '3333-12-3456789',
+    account: '3333-23-4451659',
     holder: '(주)플로카',
   };
 
@@ -68,7 +68,7 @@ export function PaymentModal({
 
   const handlePaymentComplete = () => {
     trackCTA('payment_complete_button', '/order-complete');
-    
+
     // 주문 정보를 state로 전달
     navigate('/order-complete', {
       state: {
@@ -144,19 +144,15 @@ export function PaymentModal({
             {/* QR 이미지 placeholder */}
             <div className="aspect-square max-w-[200px] mx-auto bg-muted rounded-xl flex items-center justify-center border-2 border-dashed border-border">
               <div className="text-center p-4">
-                <QrCode className="w-16 h-16 mx-auto text-muted-foreground mb-2" />
-                <p className="text-xs text-muted-foreground">
-                  카카오페이 QR 이미지
-                </p>
-                <p className="text-[10px] text-muted-foreground mt-1">
-                  (KAKAOPAY_QR_IMAGE_URL)
-                </p>
+                <img src="KakaoPay.png" alt="" />
               </div>
             </div>
 
             {/* 3스텝 안내 */}
             <div className="bg-muted/50 rounded-lg p-3">
-              <p className="text-sm font-medium text-foreground mb-2">스캔 방법</p>
+              <p className="text-sm font-medium text-foreground mb-2">
+                스캔 방법
+              </p>
               <ol className="text-xs text-muted-foreground space-y-1">
                 <li>1. 카카오페이 앱 열기</li>
                 <li>2. 결제/송금 선택</li>
@@ -196,7 +192,9 @@ export function PaymentModal({
             <div className="bg-muted/50 rounded-xl p-4 space-y-3">
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">은행</span>
-                <span className="font-medium text-foreground">{bankInfo.bank}</span>
+                <span className="font-medium text-foreground">
+                  {bankInfo.bank}
+                </span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">계좌번호</span>
@@ -220,13 +218,17 @@ export function PaymentModal({
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm text-muted-foreground">예금주</span>
-                <span className="font-medium text-foreground">{bankInfo.holder}</span>
+                <span className="font-medium text-foreground">
+                  {bankInfo.holder}
+                </span>
               </div>
             </div>
 
             {/* 입금자명 안내 */}
             <div className="space-y-2">
-              <p className="text-sm font-medium text-foreground">입금자명 규칙</p>
+              <p className="text-sm font-medium text-foreground">
+                입금자명 규칙
+              </p>
               <div className="bg-primary/5 border border-primary/20 rounded-lg p-3">
                 <p className="text-sm font-mono text-primary">{emailPrefix}</p>
               </div>

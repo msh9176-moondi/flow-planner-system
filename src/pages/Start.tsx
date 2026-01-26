@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  ArrowRight, 
-  Check, 
-  Package, 
-  RefreshCcw, 
+import {
+  ArrowRight,
+  Check,
+  Package,
+  RefreshCcw,
   BarChart3,
   Timer,
   Puzzle,
@@ -15,7 +15,7 @@ import {
   Sparkles,
   Eye,
   Plus,
-  Minus
+  Minus,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -46,14 +46,14 @@ const pricingCards = [
   {
     id: 'starter',
     name: '시작 패키지',
-    price: 29000,
-    displayPrice: '29,000',
+    price: 39000,
+    displayPrice: '39,000',
     icon: Package,
     tier: 'main',
     badge: '추천',
     targetUser: '플래너를 사도 3일 만에 포기했던 분',
     features: [
-      '플래너 본체 1권 (3개월분)',
+      '플래너 본체 1권 ',
       '마그네틱 할 일 카드 기본 세트',
       'NFC 태그 스티커 3장',
       'CBT 미루기 대응 워크시트',
@@ -145,7 +145,7 @@ const faqItems = [
   },
   {
     q: 'NFC 태그는 어떻게 사용하나요?',
-    a: '스마트폰으로 NFC 스티커를 터치하면 자동으로 앱이 열리고 완료가 기록됩니다. 별도 앱 설치가 필요하며, 대부분의 스마트폰에서 지원됩니다.',
+    a: '스마트폰으로 NFC 스티커를 터치하면 자동으로 웹이 열리고 완료가 기록됩니다. 별도 앱 설치는 필요하지 않으며, 대부분의 스마트폰에서 지원됩니다.',
   },
   {
     q: '플래너 사용이 처음인데 어렵지 않을까요?',
@@ -161,7 +161,7 @@ const faqItems = [
   },
   {
     q: '아이도 사용할 수 있나요?',
-    a: '네, 초등 고학년 이상이면 보호자와 함께 사용 가능합니다. 다만 아이 전용 버전은 아니므로 상황에 맞게 조정해 주세요.',
+    a: '네, 초등학년 이상이면 보호자와 함께 사용 가능합니다. 다만 아이 보호자와 함께 상황에 맞게 조정해 주세요.',
   },
 ];
 
@@ -173,10 +173,18 @@ interface SelectedItem {
 
 export default function Start() {
   const navigate = useNavigate();
-  const { trackCTA, trackPageView, trackFormSubmit, trackOptionSelect, trackFAQOpen } = useTracking();
-  
+  const {
+    trackCTA,
+    trackPageView,
+    trackFormSubmit,
+    trackOptionSelect,
+    trackFAQOpen,
+  } = useTracking();
+
   // 체크박스 기반 선택 상태
-  const [selectedItems, setSelectedItems] = useState<Record<string, SelectedItem>>({
+  const [selectedItems, setSelectedItems] = useState<
+    Record<string, SelectedItem>
+  >({
     starter: { id: 'starter', checked: true, quantity: 1 },
     refill: { id: 'refill', checked: false, quantity: 1 },
     subscription: { id: 'subscription', checked: false, quantity: 1 },
@@ -200,7 +208,10 @@ export default function Start() {
       ...prev,
       [id]: { ...prev[id], checked },
     }));
-    trackOptionSelect('package_toggle', `${id}_${checked ? 'checked' : 'unchecked'}`);
+    trackOptionSelect(
+      'package_toggle',
+      `${id}_${checked ? 'checked' : 'unchecked'}`,
+    );
   };
 
   // 수량 변경
@@ -212,7 +223,10 @@ export default function Start() {
         [id]: { ...prev[id], quantity: newQuantity },
       };
     });
-    trackOptionSelect('quantity_change', `${id}_${delta > 0 ? 'increase' : 'decrease'}`);
+    trackOptionSelect(
+      'quantity_change',
+      `${id}_${delta > 0 ? 'increase' : 'decrease'}`,
+    );
   };
 
   // 총액 계산
@@ -222,7 +236,7 @@ export default function Start() {
 
     Object.values(selectedItems).forEach((item) => {
       if (!item.checked) return;
-      
+
       const cardData = pricingCards.find((c) => c.id === item.id);
       if (!cardData) return;
 
@@ -257,7 +271,7 @@ export default function Start() {
   // 폼 제출 → 결제 모달 열기
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!formData.email) {
       return;
     }
@@ -266,26 +280,32 @@ export default function Start() {
       return;
     }
 
-    trackFormSubmit('order_form', { 
-      items: getSelectedOrderItems().map(i => i.id).join(','),
+    trackFormSubmit('order_form', {
+      items: getSelectedOrderItems()
+        .map((i) => i.id)
+        .join(','),
       hasEmail: !!formData.email,
       total: oneTimeTotal,
     });
-    
+
     trackCTA('payment_modal_open', 'order_form');
     setIsPaymentModalOpen(true);
   };
 
   const scrollToOrder = () => {
     trackCTA('bottom_cta', '#order-form');
-    document.getElementById('order-form')?.scrollIntoView({ behavior: 'smooth' });
+    document
+      .getElementById('order-form')
+      ?.scrollIntoView({ behavior: 'smooth' });
   };
 
   const goToHowItWorks = () => {
     trackCTA('how_it_works_button', '/');
     navigate('/');
     setTimeout(() => {
-      document.getElementById('how-it-works')?.scrollIntoView({ behavior: 'smooth' });
+      document
+        .getElementById('how-it-works')
+        ?.scrollIntoView({ behavior: 'smooth' });
     }, 100);
   };
 
@@ -293,12 +313,14 @@ export default function Start() {
     switch (tier) {
       case 'main':
         return {
-          container: 'border-primary shadow-hover ring-2 ring-primary/20 bg-card',
+          container:
+            'border-primary shadow-hover ring-2 ring-primary/20 bg-card',
           button: 'hero' as const,
         };
       case 'sub':
         return {
-          container: 'border-border shadow-card hover:border-primary/30 bg-card',
+          container:
+            'border-border shadow-card hover:border-primary/30 bg-card',
           button: 'outline' as const,
         };
       case 'optional':
@@ -326,12 +348,15 @@ export default function Start() {
           <div className="container relative z-10">
             <div className="max-w-2xl mx-auto text-center space-y-6">
               <h1 className="text-3xl md:text-4xl lg:text-5xl font-extrabold text-foreground leading-tight">
-                오늘부터 <span className="text-gradient-primary">'시작'</span>만<br />
+                오늘부터 <span className="text-gradient-primary">'시작'</span>만
+                <br />
                 자동화해도 달라집니다
               </h1>
               <p className="text-lg text-muted-foreground">
-                <strong className="text-foreground">트리거 → CBT → 리워드</strong> 루프가 
-                실행을 자동화합니다.
+                <strong className="text-foreground">
+                  트리거 → CBT → 리워드
+                </strong>{' '}
+                루프가 실행을 자동화합니다.
               </p>
               <p className="text-xs text-muted-foreground">
                 ※ 본 플래너는 의학적 치료를 대체하지 않습니다.
@@ -341,10 +366,14 @@ export default function Start() {
         </section>
 
         {/* 2. Pricing Cards */}
-        <section id="pricing-cards" className="py-16 md:py-20 bg-background scroll-mt-16">
+        <section
+          id="pricing-cards"
+          className="py-16 md:py-20 bg-background scroll-mt-16"
+        >
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-4">
-              필요한 것만 <span className="text-gradient-primary">담았습니다</span>
+              필요한 것만{' '}
+              <span className="text-gradient-primary">담았습니다</span>
             </h2>
             <p className="text-center text-muted-foreground mb-12">
               시작 패키지 하나면 충분해요.
@@ -354,7 +383,7 @@ export default function Start() {
               {pricingCards.map((card) => {
                 const styles = getTierStyles(card.tier);
                 const isChecked = selectedItems[card.id]?.checked || false;
-                
+
                 return (
                   <div
                     key={card.id}
@@ -369,35 +398,61 @@ export default function Start() {
                     )}
 
                     <div className="text-center mb-4">
-                      <card.icon className={`w-10 h-10 mx-auto mb-3 ${
-                        card.tier === 'optional' ? 'text-muted-foreground' : 'text-primary'
-                      }`} />
-                      <h3 className="text-xl font-bold text-foreground">{card.name}</h3>
+                      <card.icon
+                        className={`w-10 h-10 mx-auto mb-3 ${
+                          card.tier === 'optional'
+                            ? 'text-muted-foreground'
+                            : 'text-primary'
+                        }`}
+                      />
+                      <h3 className="text-xl font-bold text-foreground">
+                        {card.name}
+                      </h3>
                     </div>
 
                     <div className="mb-4">
-                      <p className="text-xs font-medium text-primary mb-1">이런 분께</p>
-                      <p className="text-sm text-foreground">{card.targetUser}</p>
+                      <p className="text-xs font-medium text-primary mb-1">
+                        이런 분께
+                      </p>
+                      <p className="text-sm text-foreground">
+                        {card.targetUser}
+                      </p>
                     </div>
 
                     <div className="text-center mb-4 py-3 bg-muted/50 rounded-xl">
-                      <span className={`text-3xl font-extrabold ${
-                        card.tier === 'optional' ? 'text-muted-foreground' : 'text-foreground'
-                      }`}>
+                      <span
+                        className={`text-3xl font-extrabold ${
+                          card.tier === 'optional'
+                            ? 'text-muted-foreground'
+                            : 'text-foreground'
+                        }`}
+                      >
                         ₩{card.displayPrice}
                       </span>
                       {card.priceUnit && (
-                        <span className="text-muted-foreground text-sm">{card.priceUnit}</span>
+                        <span className="text-muted-foreground text-sm">
+                          {card.priceUnit}
+                        </span>
                       )}
                     </div>
 
                     <ul className="space-y-2 mb-4">
                       {card.features.map((f, j) => (
                         <li key={j} className="flex items-start gap-2 text-sm">
-                          <Check className={`w-4 h-4 shrink-0 mt-0.5 ${
-                            card.tier === 'optional' ? 'text-muted-foreground' : 'text-growth'
-                          }`} />
-                          <span className={card.tier === 'optional' ? 'text-muted-foreground' : 'text-foreground'}>
+                          <Check
+                            className={`w-4 h-4 shrink-0 mt-0.5 ${
+                              card.tier === 'optional'
+                                ? 'text-muted-foreground'
+                                : 'text-growth'
+                            }`}
+                          />
+                          <span
+                            className={
+                              card.tier === 'optional'
+                                ? 'text-muted-foreground'
+                                : 'text-foreground'
+                            }
+                          >
                             {f}
                           </span>
                         </li>
@@ -405,7 +460,9 @@ export default function Start() {
                     </ul>
 
                     <div className="mb-4 p-3 bg-growth/5 rounded-lg border border-growth/10">
-                      <p className="text-xs text-growth font-medium">→ {card.outcome}</p>
+                      <p className="text-xs text-growth font-medium">
+                        → {card.outcome}
+                      </p>
                     </div>
 
                     <Button
@@ -413,7 +470,9 @@ export default function Start() {
                       className="w-full"
                       onClick={() => {
                         handleItemToggle(card.id, !isChecked);
-                        document.getElementById('order-form')?.scrollIntoView({ behavior: 'smooth' });
+                        document
+                          .getElementById('order-form')
+                          ?.scrollIntoView({ behavior: 'smooth' });
                       }}
                     >
                       {isChecked ? '선택됨 ✓' : '선택하기'}
@@ -425,7 +484,9 @@ export default function Start() {
 
             {/* CTA 문구 3안 표시 */}
             <div className="mt-8 max-w-md mx-auto text-center">
-              <p className="text-xs text-muted-foreground mb-2">CTA 문구 옵션</p>
+              <p className="text-xs text-muted-foreground mb-2">
+                CTA 문구 옵션
+              </p>
               <div className="flex flex-wrap justify-center gap-2">
                 <span className="px-3 py-1 bg-primary text-primary-foreground text-xs rounded-full">
                   감정형: {ctaOptions.emotional}
@@ -442,7 +503,10 @@ export default function Start() {
         </section>
 
         {/* 3. Differences Section */}
-        <section id="differences" className="py-16 md:py-20 bg-muted scroll-mt-16">
+        <section
+          id="differences"
+          className="py-16 md:py-20 bg-muted scroll-mt-16"
+        >
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-4">
               무엇이 <span className="text-gradient-primary">다른가요?</span>
@@ -457,10 +521,14 @@ export default function Start() {
                   key={i}
                   className="bg-card rounded-xl p-5 border border-border shadow-soft hover:shadow-hover transition-all"
                 >
-                  <div className={`w-12 h-12 rounded-lg ${card.color} flex items-center justify-center mb-4`}>
+                  <div
+                    className={`w-12 h-12 rounded-lg ${card.color} flex items-center justify-center mb-4`}
+                  >
                     <card.icon className="w-6 h-6" />
                   </div>
-                  <h3 className="font-bold text-foreground mb-2">{card.title}</h3>
+                  <h3 className="font-bold text-foreground mb-2">
+                    {card.title}
+                  </h3>
                   <p className="text-sm text-muted-foreground">{card.desc}</p>
                 </div>
               ))}
@@ -469,7 +537,10 @@ export default function Start() {
         </section>
 
         {/* 4. Order Form */}
-        <section id="order-form" className="py-16 md:py-20 bg-background scroll-mt-16">
+        <section
+          id="order-form"
+          className="py-16 md:py-20 bg-background scroll-mt-16"
+        >
           <div className="container">
             <div className="max-w-lg mx-auto">
               <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-8">
@@ -479,7 +550,9 @@ export default function Start() {
               <form onSubmit={handleFormSubmit} className="space-y-6">
                 {/* Checkbox Package Selection */}
                 <div className="space-y-3">
-                  <Label className="text-base font-semibold">패키지 선택 (중복 선택 가능)</Label>
+                  <Label className="text-base font-semibold">
+                    패키지 선택 (중복 선택 가능)
+                  </Label>
                   <div className="space-y-2">
                     {/* 시작 패키지 */}
                     <label
@@ -492,11 +565,17 @@ export default function Start() {
                       <div className="flex items-center gap-3">
                         <Checkbox
                           checked={selectedItems.starter.checked}
-                          onCheckedChange={(checked) => handleItemToggle('starter', !!checked)}
+                          onCheckedChange={(checked) =>
+                            handleItemToggle('starter', !!checked)
+                          }
                         />
-                        <span className="font-medium text-foreground">시작 패키지</span>
+                        <span className="font-medium text-foreground">
+                          시작 패키지
+                        </span>
                       </div>
-                      <span className="text-sm font-bold text-primary">₩29,000</span>
+                      <span className="text-sm font-bold text-primary">
+                        ₩39,000
+                      </span>
                     </label>
 
                     {/* 리필/추가팩 with Quantity */}
@@ -511,20 +590,33 @@ export default function Start() {
                         <div className="flex items-center gap-3">
                           <Checkbox
                             checked={selectedItems.refill.checked}
-                            onCheckedChange={(checked) => handleItemToggle('refill', !!checked)}
+                            onCheckedChange={(checked) =>
+                              handleItemToggle('refill', !!checked)
+                            }
                           />
-                          <span className="font-medium text-foreground">리필 / 추가팩</span>
+                          <span className="font-medium text-foreground">
+                            리필 / 추가팩
+                          </span>
                         </div>
                         <span className="text-sm font-bold text-primary">
-                          ₩{(12000 * selectedItems.refill.quantity).toLocaleString()}
+                          ₩
+                          {(
+                            12000 * selectedItems.refill.quantity
+                          ).toLocaleString()}
                         </span>
                       </label>
-                      
+
                       {/* Quantity Stepper */}
-                      <div className={`mt-3 flex items-center justify-between pl-7 ${
-                        !selectedItems.refill.checked ? 'opacity-50 pointer-events-none' : ''
-                      }`}>
-                        <span className="text-sm text-muted-foreground">수량</span>
+                      <div
+                        className={`mt-3 flex items-center justify-between pl-7 ${
+                          !selectedItems.refill.checked
+                            ? 'opacity-50 pointer-events-none'
+                            : ''
+                        }`}
+                      >
+                        <span className="text-sm text-muted-foreground">
+                          수량
+                        </span>
                         <div className="flex items-center gap-2">
                           <Button
                             type="button"
@@ -532,7 +624,10 @@ export default function Start() {
                             size="sm"
                             className="h-8 w-8 p-0"
                             onClick={() => handleQuantityChange('refill', -1)}
-                            disabled={!selectedItems.refill.checked || selectedItems.refill.quantity <= 1}
+                            disabled={
+                              !selectedItems.refill.checked ||
+                              selectedItems.refill.quantity <= 1
+                            }
                           >
                             <Minus className="w-4 h-4" />
                           </Button>
@@ -564,14 +659,22 @@ export default function Start() {
                       <div className="flex items-center gap-3">
                         <Checkbox
                           checked={selectedItems.subscription.checked}
-                          onCheckedChange={(checked) => handleItemToggle('subscription', !!checked)}
+                          onCheckedChange={(checked) =>
+                            handleItemToggle('subscription', !!checked)
+                          }
                         />
                         <div>
-                          <span className="font-medium text-foreground">분석 구독</span>
-                          <p className="text-xs text-muted-foreground">매월 자동 결제</p>
+                          <span className="font-medium text-foreground">
+                            분석 구독 - 준비중
+                          </span>
+                          <p className="text-xs text-muted-foreground">
+                            매월 자동 결제
+                          </p>
                         </div>
                       </div>
-                      <span className="text-sm font-bold text-muted-foreground">₩2,900/월</span>
+                      <span className="text-sm font-bold text-muted-foreground">
+                        ₩0/월
+                      </span>
                     </label>
                   </div>
                 </div>
@@ -579,42 +682,52 @@ export default function Start() {
                 {/* 선택 요약 박스 */}
                 <div className="p-4 bg-muted/50 rounded-xl border border-border space-y-3">
                   <h4 className="font-semibold text-foreground">선택 요약</h4>
-                  
+
                   {!hasSelectedItems ? (
-                    <p className="text-sm text-muted-foreground">선택된 항목이 없습니다.</p>
+                    <p className="text-sm text-muted-foreground">
+                      선택된 항목이 없습니다.
+                    </p>
                   ) : (
                     <>
                       <ul className="space-y-1 text-sm">
                         {selectedItems.starter.checked && (
                           <li className="flex justify-between">
                             <span>시작 패키지</span>
-                            <span className="font-medium">₩29,000</span>
+                            <span className="font-medium">₩39,000</span>
                           </li>
                         )}
                         {selectedItems.refill.checked && (
                           <li className="flex justify-between">
-                            <span>리필 / 추가팩 x{selectedItems.refill.quantity}</span>
+                            <span>
+                              리필 / 추가팩 x{selectedItems.refill.quantity}
+                            </span>
                             <span className="font-medium">
-                              ₩{(12000 * selectedItems.refill.quantity).toLocaleString()}
+                              ₩
+                              {(
+                                12000 * selectedItems.refill.quantity
+                              ).toLocaleString()}
                             </span>
                           </li>
                         )}
                         {selectedItems.subscription.checked && (
                           <li className="flex justify-between text-muted-foreground">
                             <span>분석 구독 (월 결제)</span>
-                            <span className="font-medium">₩2,900/월</span>
+                            <span className="font-medium">₩0/월</span>
                           </li>
                         )}
                       </ul>
-                      
+
                       <div className="border-t border-border pt-3">
                         <div className="flex justify-between text-lg font-bold">
                           <span>총 결제 금액</span>
-                          <span className="text-primary">₩{oneTimeTotal.toLocaleString()}</span>
+                          <span className="text-primary">
+                            ₩{oneTimeTotal.toLocaleString()}
+                          </span>
                         </div>
                         {subscriptionTotal > 0 && (
                           <p className="text-xs text-muted-foreground mt-1">
-                            + 월 ₩{subscriptionTotal.toLocaleString()} (구독 별도 결제)
+                            + 월 ₩{subscriptionTotal.toLocaleString()} (구독
+                            별도 결제)
                           </p>
                         )}
                       </div>
@@ -625,7 +738,10 @@ export default function Start() {
                 {/* Contact Info */}
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="email" className="flex items-center gap-2 mb-2">
+                    <Label
+                      htmlFor="email"
+                      className="flex items-center gap-2 mb-2"
+                    >
                       <Mail className="w-4 h-4" />
                       이메일 <span className="text-destructive">*</span>
                     </Label>
@@ -634,13 +750,18 @@ export default function Start() {
                       type="email"
                       placeholder="your@email.com"
                       value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, email: e.target.value })
+                      }
                       required
                       className="h-12"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="phone" className="flex items-center gap-2 mb-2">
+                    <Label
+                      htmlFor="phone"
+                      className="flex items-center gap-2 mb-2"
+                    >
                       <Phone className="w-4 h-4" />
                       휴대폰 (선택)
                     </Label>
@@ -649,7 +770,9 @@ export default function Start() {
                       type="tel"
                       placeholder="010-0000-0000"
                       value={formData.phone}
-                      onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value })
+                      }
                       className="h-12"
                     />
                   </div>
@@ -684,7 +807,10 @@ export default function Start() {
         </section>
 
         {/* 5. FAQ */}
-        <section id="start-faq" className="py-16 md:py-20 bg-muted scroll-mt-16">
+        <section
+          id="start-faq"
+          className="py-16 md:py-20 bg-muted scroll-mt-16"
+        >
           <div className="container">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-foreground mb-8">
               자주 묻는 질문
@@ -698,7 +824,7 @@ export default function Start() {
                     value={`faq-${i}`}
                     className="bg-card rounded-xl border border-border px-4"
                   >
-                    <AccordionTrigger 
+                    <AccordionTrigger
                       className="text-left font-medium py-4 hover:no-underline"
                       onClick={() => trackFAQOpen(item.q)}
                     >
@@ -720,7 +846,8 @@ export default function Start() {
           <div className="container relative z-10">
             <div className="max-w-xl mx-auto text-center space-y-6">
               <h2 className="text-2xl md:text-3xl font-bold text-foreground">
-                시작은 <span className="text-gradient-primary">오늘</span>이 가장 빠릅니다
+                시작은 <span className="text-gradient-primary">오늘</span>이
+                가장 빠릅니다
               </h2>
               <p className="text-muted-foreground">
                 일주일 뒤, 다른 하루를 보내고 있을 거예요.

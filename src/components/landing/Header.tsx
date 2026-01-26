@@ -56,8 +56,8 @@ export function Header() {
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
       <div className="container flex items-center justify-between h-16">
-        <a 
-          href="#" 
+        <a
+          href="#"
           onClick={(e) => {
             e.preventDefault();
             handleHomeClick();
@@ -73,18 +73,6 @@ export function Header() {
           {isStartPage ? (
             // Start 페이지용 네비게이션
             <>
-              <a href="#pricing-cards" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                가격
-              </a>
-              <a href="#differences" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                특징
-              </a>
-              <a href="#order-form" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                주문
-              </a>
-              <a href="#start-faq" className="text-muted-foreground hover:text-primary transition-colors font-medium">
-                FAQ
-              </a>
               <Button variant="ghost" size="sm" onClick={handleHomeClick}>
                 <Home className="w-4 h-4 mr-1" />
                 홈으로
@@ -125,18 +113,6 @@ export function Header() {
           <div className="container flex flex-col gap-4">
             {isStartPage ? (
               <>
-                <a href="#pricing-cards" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
-                  가격
-                </a>
-                <a href="#differences" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
-                  특징
-                </a>
-                <a href="#order-form" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
-                  주문
-                </a>
-                <a href="#start-faq" className="text-foreground hover:text-primary transition-colors font-medium py-2" onClick={() => setIsOpen(false)}>
-                  FAQ
-                </a>
                 <Button variant="outline" onClick={handleHomeClick}>
                   <Home className="w-4 h-4 mr-1" />
                   홈으로
