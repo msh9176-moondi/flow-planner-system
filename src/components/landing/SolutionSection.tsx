@@ -1,4 +1,7 @@
-import { Bell, Timer, Puzzle, Brain, Smartphone, Zap } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
+import { Bell, Timer, Puzzle, Brain, Smartphone, Zap, ArrowRight } from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { useTracking } from '@/hooks/use-tracking';
 
 const principles = [
   {
@@ -44,6 +47,14 @@ const principles = [
 ];
 
 export function SolutionSection() {
+  const navigate = useNavigate();
+  const { trackCTA } = useTracking();
+
+  const handleDetailsClick = () => {
+    trackCTA('solution_details_button', '/details');
+    navigate('/details');
+  };
+
   return (
     <section id="how-it-works" className="py-20 md:py-28 bg-background scroll-mt-16">
       <div className="container">
@@ -98,6 +109,19 @@ export function SolutionSection() {
               </div>
             </div>
           ))}
+        </div>
+
+        {/* Details CTA */}
+        <div className="text-center mt-12">
+          <Button
+            variant="outline"
+            size="lg"
+            onClick={handleDetailsClick}
+            className="group"
+          >
+            제품 상세 보기
+            <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+          </Button>
         </div>
 
         {/* Bottom Note */}
