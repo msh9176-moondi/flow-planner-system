@@ -7,6 +7,7 @@ import Index from './pages/Index';
 import Start from './pages/Start';
 import HowItWorks from './pages/HowItWorks';
 import OrderComplete from './pages/OrderComplete';
+import ProductDetails from './pages/ProductDetails';
 import NotFound from './pages/NotFound';
 
 const queryClient = new QueryClient();
@@ -22,6 +23,7 @@ const App = () => (
           <Route path="/start" element={<Start />} />
           <Route path="/how-it-works" element={<HowItWorks />} />
           <Route path="/order-complete" element={<OrderComplete />} />
+          <Route path="/details" element={<ProductDetails />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </TooltipProvider>
