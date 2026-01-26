@@ -20,6 +20,7 @@ export function Header() {
 
   const isStartPage = location.pathname === '/start';
   const isHowItWorksPage = location.pathname === '/how-it-works';
+  const isDetailsPage = location.pathname === '/details';
 
   const handleScrollToSection = (sectionId: string) => {
     // 랜딩 페이지가 아니면 먼저 이동
@@ -90,6 +91,17 @@ export function Header() {
                 홈으로
               </Button>
             </>
+          ) : isDetailsPage ? (
+            // Details 페이지용 네비게이션
+            <>
+              <Button variant="ghost" size="sm" onClick={handleHomeClick}>
+                <Home className="w-4 h-4 mr-1" />
+                홈으로
+              </Button>
+              <Button variant="hero" size="sm" onClick={handleStartClick}>
+                구매하기
+              </Button>
+            </>
           ) : (
             // 랜딩 페이지용 네비게이션
             <>
@@ -140,6 +152,16 @@ export function Header() {
                 <Button variant="outline" onClick={handleHomeClick}>
                   <Home className="w-4 h-4 mr-1" />
                   홈으로
+                </Button>
+              </>
+            ) : isDetailsPage ? (
+              <>
+                <Button variant="outline" onClick={handleHomeClick}>
+                  <Home className="w-4 h-4 mr-1" />
+                  홈으로
+                </Button>
+                <Button variant="hero" onClick={handleStartClick}>
+                  구매하기
                 </Button>
               </>
             ) : (
