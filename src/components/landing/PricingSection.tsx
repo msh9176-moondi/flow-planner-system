@@ -3,7 +3,6 @@ import {
   Package,
   RefreshCcw,
   BarChart3,
-  ArrowRight,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -220,13 +219,10 @@ export function PricingSection() {
                 {/* CTA Button */}
                 <Button
                   variant={styles.button}
-                  className="w-full group"
-                  asChild
+                  className="w-full opacity-50 cursor-not-allowed"
+                  disabled
                 >
-                  <a href="#" target="_blank" rel="noopener noreferrer">
-                    {ctaText}
-                    <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                  </a>
+                  체험단 마감
                 </Button>
               </div>
             );

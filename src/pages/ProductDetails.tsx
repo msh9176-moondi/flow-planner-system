@@ -6,7 +6,7 @@ import { MediaBlock } from '@/components/details/MediaBlock';
 import { TableOfContents } from '@/components/details/TableOfContents';
 import { Button } from '@/components/ui/button';
 import { useTracking } from '@/hooks/use-tracking';
-import { ArrowRight, Home, CheckCircle2, Sparkles } from 'lucide-react';
+import { Home, CheckCircle2, Sparkles } from 'lucide-react';
 
 // 섹션 데이터 - 나중에 파일만 교체하면 됨
 const sections = [
@@ -143,9 +143,8 @@ export default function ProductDetails() {
                 의지가 아닌 시스템으로 실행까지 이어지는 구조
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="lg" onClick={handleStartClick}>
-                  구매 / 시작하기
-                  <ArrowRight className="w-5 h-5" />
+                <Button variant="hero" size="lg" disabled className="opacity-50 cursor-not-allowed">
+                  체험단 마감
                 </Button>
                 <Button
                   variant="outline"
@@ -238,9 +237,8 @@ export default function ProductDetails() {
                 시작 패키지로 트리거 → CBT → 리워드 시스템을 경험하세요.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Button variant="hero" size="lg" onClick={handleStartClick}>
-                  시작 패키지로 시작하기
-                  <ArrowRight className="w-5 h-5" />
+                <Button variant="hero" size="lg" disabled className="opacity-50 cursor-not-allowed">
+                  체험단 마감
                 </Button>
                 <Button
                   variant="outline"
